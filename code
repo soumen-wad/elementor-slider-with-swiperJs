@@ -1,0 +1,135 @@
+
+
+Page editor widget and class name add (elementor)
+==============================================================================================
+create a section with elementor > then add container section and class name is "post_slide" > then add container section and class name is "e-con-inner"   >  then add  container like induvidual item wrap (image, title, etc)
+
+
+
+add elementor js and css  function.php
+===========================================================================================================================================================================
+
+  
+function hello_elementor_child_scripts_styles() {
+
+	wp_enqueue_style(
+		'hello-elementor-child-style',
+		get_stylesheet_directory_uri() . '/style.css',
+		[
+			'hello-elementor-theme-style',
+		],
+		HELLO_ELEMENTOR_CHILD_VERSION
+	);
+
+}
+add_action( 'wp_enqueue_scripts', 'hello_elementor_child_scripts_styles', 20 );
+
+
+function enqueue_custom_files_child_theme() {
+     // Swiper CSS
+     wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', array(), null);
+     
+    // Enqueue Custom CSS
+    wp_enqueue_style(
+        'custom-elementor-style',
+        get_stylesheet_directory_uri() . '/css/custom-elementor.css',
+        [],
+        '1.0',
+        'all'
+    );
+
+
+     // Swiper JS
+     wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array('jquery'), null, true);
+
+    // Enqueue Custom JavaScript
+    wp_enqueue_script(
+        'custom-elementor-script',
+        get_stylesheet_directory_uri() . '/js/custom-elementor.js',
+        ['swiper-js', 'jquery'], // jQuery dependency
+        '1.0',
+        true // Load in the footer
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_custom_files_child_theme', 21);
+
+
+
+
+
+custome js and css code
+=========================================================================================================================
+
+js
+=========================
+  
+  jQuery(document).ready(function($) {
+    // Loop through each '.post_slide' element
+    jQuery(".post_slide").each(function() {
+        var $this = jQuery(this);
+
+        // Remove all classes except the custom class '.post_slide'
+        $this.attr('class', 'swiper post_slide mySwiper');
+
+        // Remove all classes from '.e-con-inner' and add 'swiper-wrapper'
+        $this.find(".e-con-inner").attr('class', 'swiper-wrapper');
+
+        // Remove all classes from each child of '.e-con-inner' and add 'swiper-slide'
+        $this.find(".swiper-wrapper .e-child").each(function() {
+            jQuery(this).attr('class', 'swiper-slide');
+        });
+
+        // Append Swiper controls if not already added
+        if (!$this.find('.swiper-pagination').length) {
+            $this.append('<div class="swiper-pagination"></div><div class="swiper-button-prev"></div><div class="swiper-button-next"></div>');
+        }
+    });
+
+    // Initialize Swiper (if not already initialized)
+    new Swiper('.mySwiper', {
+        loop: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        spaceBetween: 10, // Space between slides
+        breakpoints: {
+            // When the viewport width is >= 1024px (desktop)
+            1024: {
+                slidesPerView: 3,
+            },
+            // When the viewport width is < 1024px (mobile and tablets)
+            0: {
+                slidesPerView: 1,
+            }
+        }
+    });
+});
+
+css
+=====================================
+
+.swiper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
